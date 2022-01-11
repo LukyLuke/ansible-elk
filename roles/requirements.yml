@@ -1,0 +1,9 @@
+---
+- hispanico.nginx_revproxy
+- robertdebock.bootstrap
+- robertdebock.rsyslog
+- robertdebock.elasticsearch
+- robertdebock.core_dependencies
+- robertdebock.elastic_repo
+- robertdebock.kibana
+- robertdebock.logstash

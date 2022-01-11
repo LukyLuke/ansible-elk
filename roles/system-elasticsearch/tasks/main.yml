@@ -1,0 +1,24 @@
+---
+# Configure the Elasticsearch user iwth memlock, hard/softlimit, ...
+- name: Pam_Limit-ting Elasticsearch user
+  pam_limits:
+    domain: elasticsearch
+    limit_type: "-"
+    limit_item: memlock
+    value: unlimited
+    comment: Unlimited memory lock for elasticsearch
+
+- name: Unlimited LimitMEMLOCK
+  lineinfile:
+    path: /usr/lib/systemd/system/elasticsearch.service
+    insertafter: "LimitAS=infinity"
+    line: "LimitMEMLOCK=infinity"
+    state: present
+
+- name: Open vm.max_map_count
+  sysctl: name={{ item.key }} value={{ item.value }}
+  with_items:
+    - { key: "vm.max_map_count", value: "262144" }
+
+- name: Persist vm.max_map_count
+  command: sysctl -p /etc/sysctl.conf

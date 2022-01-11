@@ -1,0 +1,10 @@
+
+output {
+  elasticsearch {
+    hosts => [
+      {% for host in logstash_elasticsearch_hosts|default(dict(), true) %}"{{ host.host|default("127.0.0.1") }}:{{ host.port|default("9200") }}"{% if not loop.last +%},
+      {% endif %}{% endfor +%}
+    ]
+    ecs_compatibility => "disabled"
+  }
+}

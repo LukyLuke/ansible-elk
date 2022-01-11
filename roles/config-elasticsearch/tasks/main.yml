@@ -1,0 +1,54 @@
+---
+# Elasticsearch Configuration
+
+- name: JVM-HeapSize for Elasticsearch
+  lineinfile:
+    dest: /etc/elasticsearch/jvm.options
+    regex: "^-Xms"
+    line: "-Xms{{ elasticsearch_jvm_xms }}"
+  when: elasticsearch_jvm_xms is defined
+  tags:
+    - config
+
+- name: JVM-MaxHeapSize for Elasticsearch
+  lineinfile:
+    dest: /etc/elasticsearch/jvm.options
+    regex: "^-Xmx"
+    line: "-Xmx{{ elasticsearch_jvm_xmx }}"
+  when: elasticsearch_jvm_xmx is defined
+  tags:
+    - config
+
+- name: GC-Filecount for Elasticsearch
+  replace:
+    path: /etc/elasticsearch/jvm.options
+    regexp: "filecount.32"
+    replace: "filecount={{ elasticsearch_gc_filecount|default('5') }}"
+  tags:
+    - config
+
+- name: GC-Loglevel for Elasticsearch
+  replace:
+    path: /etc/elasticsearch/jvm.options
+    regexp: "gc+age.[^,]+"
+    replace: "gc+age={{ elasticsearch_gc_loglevel|default('info') }}"
+  tags:
+    - config
+
+#- name: Elastic-Cluster Name
+#  lineinfile:
+#    dest: /etc/elasticsearch/elasticsearch.yml
+#    regex: "^#?cluster.name"
+#    line: "cluster.name: {{ elasticsearch_cluster_name }}"
+#  when: elasticsearch_cluster_name is defined
+#  tags:
+#    - config
+
+#- name: Elastic-Node Name
+#  lineinfile:
+#    dest: /etc/elasticsearch/elasticsearch.yml
+#    regex: "^#?node.name"
+#    line: "node.name: {{ elasticsearch_node_name }}"
+#  when: elasticsearch_node_name is defined
+#  tags:
+#    - config

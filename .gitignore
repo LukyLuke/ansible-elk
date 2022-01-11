@@ -1,0 +1,7 @@
+/inventory/hosts
+.molecule
+*.log
+*.swp
+.tox
+.cache
+.DS_Store

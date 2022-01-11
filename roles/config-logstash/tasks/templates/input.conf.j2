@@ -1,0 +1,19 @@
+input {
+{% if logstash_syslog is defined %}
+  udp {
+    port => {% if logstash_syslog.port is defined %}{{ logstash_syslog.port }}{% else %}1514{% endif +%}
+    host => "{% if logstash_syslog.host is defined %}{{ logstash_syslog.host }}{% else %}127.0.0.1{% endif +%}"
+    codec => "json"
+    type => "syslog"
+    ecs_compatibility => "disabled"
+  }
+{% endif %}
+{% if logstash_beats is defined %}
+  beats {
+    port => {% if logstash_beats.port is defined %}{{ logstash_beats.port }}{% else %}5044{% endif +%}
+    host => "{% if logstash_beats.host is defined %}{{ logstash_beats.host }}{% else %}127.0.0.1{% endif +%}"
+    type => "beats"
+    ecs_compatibility => "disabled"
+  }
+{% endif %}
+}

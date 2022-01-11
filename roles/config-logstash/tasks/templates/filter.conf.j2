@@ -1,0 +1,49 @@
+
+filter {
+  #if [type] == "syslog" {
+  #  grok {
+  #    match => {
+  #      "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}"
+  #    }
+  #    add_field => [ "received_at", "%{@timestamp}" ]
+  #    add_field => [ "received_from", "%{host}" ]
+  #    ecs_compatibility => "disabled"
+  #  }
+    #date {
+    #  match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+    #  ecs_compatibility => "disabled"
+    #}
+  #}
+  
+  # If there is a field "sysloghost", move it into the field "host" and remove it
+  if [sysloghost] {
+    mutate {
+      replace => [ "host", "%{sysloghost}" ]
+      remove_field => "sysloghost"
+    }
+  }
+
+  grok {
+    match => [ "message" , "%{COMBINEDAPACHELOG}+%{GREEDYDATA:extra_fields}" ]
+    overwrite => [ "message" ]
+    ecs_compatibility => "disabled"
+  }
+
+  mutate {
+    convert => ["response", "integer"]
+    convert => ["bytes", "integer"]
+    convert => ["responsetime", "float"]
+    ecs_compatibility => "disabled"
+  }
+
+  useragent {
+    source => "agent"
+    ecs_compatibility => "disabled"
+  }
+
+  geoip {
+    source => "clientip"
+    add_tag => [ "geoip" ]
+    ecs_compatibility => "disabled"
+  }
+}
