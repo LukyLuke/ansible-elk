@@ -1,0 +1,12 @@
+
+[elastic]
+elastic1 ansible_ssh_host=
+
+[logstash]
+logstash1 ansible_ssh_host=
+
+[kibana]
+kibana1 ansible_ssh_host=
+
+[proxy]
+proxy1 ansible_ssh_host=
