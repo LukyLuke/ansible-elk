@@ -86,19 +86,30 @@
   become: yes
   gather_facts: no
   roles:
-    - role: robertdebock.bootstrap
-    - role: robertdebock.core_dependencies
-    - role: robertdebock.elastic_repo
-    - role: robertdebock.kibana
-    - role: config-kibana
+    - role: kibana
   vars:
+    kibana_version: "7.16.2"
     kibana_log_queries: false
     kibana_log_quiet: true
-    kibana_elasticsearch_url:
+    kibana_elasticsearch_hosts:
       - "http://localhost:9200"
   tags:
     - kibana
 
+
+#- name: Metricbeat
+#  hosts: elastic
+#  become: yes
+#  gather_facts: no
+#  roles:
+#    - role: elastic-metricbeat
+#  vars:
+#    metricbeat_for_elasticsearch: true
+#    metricbeat_for_logstash: true
+#    metricbeat_elasticsearch_hosts:
+#      - { host: "localhost", port: 9200 }
+#  tags:
+#    - metric
 
 - name: ReverseProxy
   hosts: proxy

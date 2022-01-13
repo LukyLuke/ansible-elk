@@ -1,0 +1,47 @@
+---
+# Install Elasticsearch Metricbeat
+
+- name: Install Metricbeat
+  ansible.builtin.apt:
+    deb: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-{{ metricbeat_version | default("7.16.2") }}-amd64.deb
+    state: present
+
+- name: Configure Metricbeat
+  ansible.builtin.template:
+    src: metricbeat.yml.j2
+    dest: /etc/metricbeat/metricbeat.yml
+    owner: root
+    group: root
+    mode: "0600"
+  tags:
+    - config
+
+- name: Enable Metrics for Elasticsearch
+  ansible.builtin.shell:
+    cmd: metricbeat modules enable elasticsearch
+  when:
+    - metricbeat_for_elasticsearch is defined
+  tags:
+    - config
+
+- name: Enable Metrics for Logstash
+  ansible.builtin.shell:
+    cmd: metricbeat modules enable logstash
+  when:
+    - metricbeat_for_logstash is defined
+  tags:
+    - config
+
+- name: Metrics Dashboard setup
+  ansible.builtin.shell:
+    cmd: metricbeat setup
+  tags:
+    - config
+
+- name: Start Metricbeat
+  ansible.builtin.service:
+    name: metricbeat
+    state: restarted
+    enabled: yes
+  tags:
+    - config

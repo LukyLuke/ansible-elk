@@ -30,7 +30,7 @@ node.name: {% if elasticsearch_node_name is defined %}{{ elasticsearch_node_name
 #
 # Path to directory where to store the data (separate multiple locations by comma):
 #
-path.data: /var/lib/elasticsearch
+path.data: {% if elasticsearch_data_path is defined %}{{ elasticsearch_data_path }}{% else %}/var/lib/elasticsearch{% endif +%}
 #
 # Path to log files:
 #
@@ -86,3 +86,7 @@ cluster.initial_master_nodes: [{% for host in elasticsearch_cluster_initial_node
 # Require explicit names when deleting indices:
 #
 #action.destructive_requires_name: true
+#
+# XPack Security module
+# Attention: This requires license!
+xpack.security.enabled: {{ elasticsearch_security_enabled | default(false) }}

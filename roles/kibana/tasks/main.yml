@@ -1,0 +1,21 @@
+---
+# Install Kibana
+
+- name: Install kibana
+  ansible.builtin.apt:
+    deb: https://artifacts.elastic.co/downloads/kibana/kibana-{{ kibana_version | default("7.16.2") }}-amd64.deb
+    state: present
+
+- name: Configure Kibana
+  ansible.builtin.template:
+    src: kibana.yml.j2
+    dest: /etc/kibana/kibana.yml
+    owner: root
+    group: kibana
+    mode: "0660"
+
+- name: Start Kibana
+  ansible.builtin.service:
+    name: kibana
+    state: restarted
+    enabled: yes

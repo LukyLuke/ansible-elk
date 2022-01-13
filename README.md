@@ -1,10 +1,10 @@
 # Ansible Playbook for a ELK Setup
 
-The RSyslog-, Logstash- and Kibana-Playbooks from [robertdebock](https://galaxy.ansible.com/robertdebock) are used.
+The RSyslog-, and Logstas-Playbooks from [robertdebock](https://galaxy.ansible.com/robertdebock) are used.
 
 The Reverse-Proxy is from [hispanico](https://galaxy.ansible.com/hispanico/nginx_revproxy)
 
-Elasticsearch is installed from scratch to have the newest version.
+Elasticsearch. Metricbeat and Kibana is installed from scratch to have the newest version.
 
 ## Prepare
 
@@ -79,9 +79,13 @@ See (Get started with Beats)[https://www.elastic.co/guide/en/beats/libbeat/7.16/
 ### Kibana
 
 ```
+  kibana_version: "7.16.2"
+
   # Don't be verbose, be quiet to not flood the whole system on each click/query
   kibana_log_queries: false
   kibana_log_quiet: true
+
+  # Elasticsearch URL
   kibana_elasticsearch_url:
     - "http://localhost:9200"
 ```
@@ -90,6 +94,7 @@ See (Get started with Beats)[https://www.elastic.co/guide/en/beats/libbeat/7.16/
 
 ```
   elasticsearch_version: "7.16.2" 
+  elasticsearch_data_path: "/var/lib/elasticsearch"
   elasticsearch_cluster_name: "elk-cluster"
   elasticsearch_node_name: "node-01"
   elasticsearch_discovery_seed_hosts:
@@ -97,11 +102,34 @@ See (Get started with Beats)[https://www.elastic.co/guide/en/beats/libbeat/7.16/
   elasticsearch_cluster_initial_master_nodes:
      - "node-01"
 
+  # Enable xpack.security
+  elasticsearch_security_enabled: true
+
   # Loglevel for GC-Log: info, debug, ...
   elasticsearch_gc_loglevel: "debug"
 
   # Number of gc-logifles
   elasticsearch_gc_filecount: 5
+```
+
+### Metricbeat
+
+```
+  metricbeat_version: "7.16.2"
+  metricbeat_kibana_host: { host: "localhost", port: 5601 }
+  metricbeat_kibana_username: "Username"
+  metricbeat_kibana_password: "Password"
+
+  # Elasticsearch receiver
+  metricbeat_elasticsearch_hosts:
+    - { host: "localhost", port: 9200 }
+  metricbeat_elasticsearch_api_key: "Api-Key"
+  metricbeat_elasticsearch_username: "Username"
+  metricbeat_elasticsearch_password: "Password"
+
+  # Beats Receiver
+  metricbeat_logstash_hosts:
+    - { host: "localhost", port: 5044 }
 ```
 
 ## Run

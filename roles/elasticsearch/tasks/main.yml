@@ -1,12 +1,12 @@
 ---
 # Install Elasticsearch
 
-- name: Install elasticsearch
+- name: Install Elasticsearch
   ansible.builtin.apt:
     deb: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-{{ elasticsearch_version | default("7.16.2") }}-amd64.deb
     state: present
 
-- name: configure elasticsearch
+- name: Configure Elasticsearch
   ansible.builtin.template:
     src: elasticsearch.yml.j2
     dest: /etc/elasticsearch/elasticsearch.yml
@@ -14,7 +14,7 @@
     group: elasticsearch
     mode: "0660"
 
-- name: start elasticsearch
+- name: Start Elasticsearch
   ansible.builtin.service:
     name: elasticsearch
     state: restarted
