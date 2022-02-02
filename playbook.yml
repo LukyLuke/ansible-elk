@@ -21,7 +21,7 @@
             constant(value="{")
             constant(value="\"@timestamp\":\"")     property(name="timereported" dateFormat="rfc3339")
             constant(value="\",\"@version\":\"1")
-            constant(value="\",\"tag\":\"")         property(name="syslogtag" format="json")
+            constant(value="\",\"tag\":\"")         property(name="syslogtag")
             constant(value="\",\"relayhost\":\"")   property(name="fromhost")
             constant(value="\",\"relayip\":\"")     property(name="fromhost-ip")
             constant(value="\",\"logsource\":\"")   property(name="source")
@@ -34,7 +34,7 @@
             constant(value="\",\"priority_label\":\"")    property(name="pri-text")
             constant(value="\",\"programname\":\"") property(name="programname")
             constant(value="\",\"procid\":\"")      property(name="procid")
-            constant(value="\",\"message\":\"")     property(name="msg" format="json")
+            constant(value="\",\"message\":\"")     property(name="msg")
             constant(value="\"}\n")
           }
   tags:
@@ -51,7 +51,7 @@
     - role: config-elasticsearch
     - role: system-elasticsearch
   vars:
-    elasticsearch_version: "7.16.2"
+    elasticsearch_version: "7.16.3"
     elasticsearch_cluster_name: "elk-cluster"
     elasticsearch_node_name: "node-01"
     elasticsearch_discovery_hosts:
@@ -67,15 +67,17 @@
   become: yes
   gather_facts: no
   roles:
-    - role: robertdebock.bootstrap
-    - role: robertdebock.core_dependencies
-    - role: robertdebock.elastic_repo
-    - role: robertdebock.logstash
-    - role: config-logstash
+    - role: logstash
   vars:
-    logstash_syslog: { port: 1514, host: "127.0.0.1" }
+    logstash_version: "7.16.3"
+    logstash_name: "Logstash"
+#    logstash_elastic_cloud: {
+#      id: "id:bas64",
+#      auth: "user:pass"
+#    }
     logstash_elasticsearch_hosts:
       - { host: "127.0.0.1", port: "9200" }
+    logstash_syslog: { port: 1514, host: "127.0.0.1" }
     logstash_beats: { port: 5044, host: "0.0.0.0" }
   tags:
     - logstash
@@ -88,7 +90,7 @@
   roles:
     - role: kibana
   vars:
-    kibana_version: "7.16.2"
+    kibana_version: "7.16.3"
     kibana_log_queries: false
     kibana_log_quiet: true
     kibana_elasticsearch_hosts:
@@ -134,6 +136,7 @@
         letsencrypt: false
       logstash:
         domains:
+          - 192.168.246.10
           - logstash
           - logstash.local
         upstreams:

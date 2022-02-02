@@ -1,5 +1,31 @@
 ---
+# Install Logstash
+- name: Install Logstash
+  ansible.builtin.apt:
+    deb: https://artifacts.elastic.co/downloads/logstash/logstash-{{ logstash_version | default("7.16.3") }}-amd64.deb
+    state: present
+
 # Configure Logstash
+- name: Data directory
+  ansible.builtin.file:
+    dest: /usr/share/logstash/data
+    owner: logstash
+    group: logstash
+    recurse: yes
+
+- name: Log directory
+  ansible.builtin.file:
+    src: /var/log/logstash
+    dest: /usr/share/logstash/logs
+    state: link
+
+- name: Configure Logstash
+  ansible.builtin.template:
+    src: logstash.yml.j2
+    dest: /etc/logstash/logstash.yml
+    owner: root
+    group: logstash
+    mode: "0660"
 
 - name: Configure Logstash-Filters
   ansible.builtin.template:
@@ -7,7 +33,7 @@
     dest: /etc/logstash/conf.d/filter.conf
     owner: logstash
     group: logstash
-    mode: "0640"
+    mode: "0660"
   tags:
     - config
 
@@ -17,7 +43,7 @@
     dest: /etc/logstash/conf.d/input.conf
     owner: logstash
     group: logstash
-    mode: "0640"
+    mode: "0660"
   tags:
     - config
 
@@ -27,20 +53,11 @@
     dest: /etc/logstash/conf.d/output.conf
     owner: logstash
     group: logstash
-    mode: "0640"
+    mode: "0660"
   tags:
     - config
 
-- name: Patch Logstash for Elastic-OSS
-  replace:
-    path: /usr/share/logstash/vendor/bundle/jruby/2.5.0/gems/logstash-output-elasticsearch-11.2.3-java/lib/logstash/outputs/elasticsearch/http_client/pool.rb
-    regexp: "build_flavor[^'|]+'default'"
-    replace: "build_flavor != 'oss'"
-  tags:
-    - patch
-    - config
-
-- name: Restart logstash
+- name: Restart Logstash
   ansible.builtin.service:
     name: logstash
     state: restarted

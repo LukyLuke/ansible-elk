@@ -3,6 +3,3 @@
 - robertdebock.bootstrap
 - robertdebock.rsyslog
 - robertdebock.core_dependencies
-- robertdebock.elastic_repo
-- robertdebock.kibana
-- robertdebock.logstash

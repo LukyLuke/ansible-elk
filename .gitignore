@@ -1,4 +1,4 @@
-inventory/hosts
+inventory/hosts*
 .molecule
 *.log
 *.swp
