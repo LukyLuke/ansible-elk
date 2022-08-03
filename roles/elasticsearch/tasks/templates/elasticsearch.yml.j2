@@ -90,3 +90,5 @@ cluster.initial_master_nodes: [{% for host in elasticsearch_cluster_initial_node
 # XPack Security module
 # Attention: This requires license!
 xpack.security.enabled: {{ elasticsearch_security_enabled | default(false) }}
+xpack.security.http.ssl.enabled: {{ elasticsearch_security_enabled | default(false) }}
+xpack.security.transport.ssl.enabled: {{ elasticsearch_security_enabled | default(false) }}
